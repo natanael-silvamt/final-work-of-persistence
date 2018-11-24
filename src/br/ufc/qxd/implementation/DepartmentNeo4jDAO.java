@@ -31,7 +31,6 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 	@Override
 	public boolean remove(long id) {
 		String query = "match(d:department) where id(d)=" + String.valueOf(id) + " delete d";
-	//	System.out.println(query);
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 			return true;			
@@ -40,8 +39,7 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 
 	@Override
 	public boolean update(long idOldDepartment, Department newDepartment) {
-		String query = "match(d:department) where id(d)=" + idOldDepartment +
-				" set d.name=$name, d.number=$number return id(d)";
+		String query = "match(d:department) where id(d)=" + idOldDepartment + " set d.name=$name, d.number=$number return id(d)";
 		Map<String, Object> map = new HashMap<>();
 		map.put("name", newDepartment.getName());
 		map.put("number", newDepartment.getNumber());
