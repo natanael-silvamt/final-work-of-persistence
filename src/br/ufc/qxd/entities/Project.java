@@ -1,13 +1,13 @@
 package br.ufc.qxd.entities;
 
 public class Project {
-	private long id_project;
+	private long projectId;
 	private String name;
 	private int number;
 	private String term;
 	
-	public Project(long id_project, String name, int number, String term) {
-		this.id_project = id_project;
+	public Project(long projectId, String name, int number, String term) {
+		this.projectId = projectId;
 		this.name = name;
 		this.number = number;
 		this.term = term;
@@ -21,12 +21,12 @@ public class Project {
 
 	public Project() {}
 
-	public long getId_project() {
-		return id_project;
+	public long getProjectId() {
+		return projectId;
 	}
 
-	public void setId_project(long id_project) {
-		this.id_project = id_project;
+	public void setProjectId(long projectId) {
+		this.projectId = projectId;
 	}
 
 	public String getName() {
@@ -55,6 +55,6 @@ public class Project {
 
 	@Override
 	public String toString() {
-		return "Project [id_project=" + id_project + ", name=" + name + ", number=" + number + ", term=" + term + "]";
+		return "Project [projectId=" + projectId + ", name=" + name + ", number=" + number + ", term=" + term + "]";
 	}
 }

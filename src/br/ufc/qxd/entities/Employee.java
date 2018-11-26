@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public abstract class Employee implements Serializable{
 	private static final long serialVersionUID = 1L;
-	protected long id_employee;
+	protected long employeeId;
 	protected String name;
 	protected String sex;
 	protected String birthday;
 	protected double salary;
 	
-	public Employee(long id_employee, String name, String sex, String birthday, double salary) {
-		this.id_employee = id_employee;
+	public Employee(long employeeId, String name, String sex, String birthday, double salary) {
+		this.employeeId = employeeId;
 		this.name = name;
 		this.sex = sex;
 		this.birthday = birthday;
@@ -27,12 +27,12 @@ public abstract class Employee implements Serializable{
 	
 	public Employee() {}
 
-	public long getId_employee() {
-		return id_employee;
+	public long getEmployeeId() {
+		return employeeId;
 	}
 
-	public void setId_employee(long id_employee) {
-		this.id_employee = id_employee;
+	public void setEmployeeId(long employeeId) {
+		this.employeeId = employeeId;
 	}
 
 	public String getName() {

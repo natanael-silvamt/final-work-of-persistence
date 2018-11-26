@@ -80,7 +80,7 @@ public class Main {
 								idDepartment = input_long.nextLong();
 								Project proj = new Project(name, number, term);								
 								projectDAO.insert(proj);
-								projectDAO.relationshipTodepartment(proj.getId_project(), idDepartment);
+								projectDAO.relationshipTodepartment(proj.getProjectId(), idDepartment);
 								System.out.println("Projeto cadastrado com sucesso!");								
 								break;
 							}
