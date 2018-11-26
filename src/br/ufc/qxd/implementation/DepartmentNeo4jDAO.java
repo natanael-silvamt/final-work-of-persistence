@@ -24,7 +24,7 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 		map.put("number", department.getNumber());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			department.setId_department(id);
+			department.setDepartmentId(id);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 		map.put("number", newDepartment.getNumber());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			newDepartment.setId_department(id);
+			newDepartment.setDepartmentId(id);
 			return true;
 		}
 	}
@@ -64,7 +64,7 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 				if(!record.get("n").get("number").isNull())
 					depart.setNumber(record.get("n").get("number").asInt());
 				if(!record.get("id(n)").isNull())
-					depart.setId_department(record.get("id(n)").asLong());				
+					depart.setDepartmentId(record.get("id(n)").asLong());				
 				departments.add(depart);
 			}
 		}
@@ -84,7 +84,7 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 				if(!rec.get("d").get("number").isNull())
 					department.setNumber(rec.get("d").get("number").asInt());
 				if(!rec.get("id(d)").isNull())
-					department.setId_department(rec.get("id(d)").asLong());
+					department.setDepartmentId(rec.get("id(d)").asLong());
 			}
 		}
 		return department;

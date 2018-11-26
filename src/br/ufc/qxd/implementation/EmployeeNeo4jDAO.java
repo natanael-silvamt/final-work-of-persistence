@@ -28,7 +28,7 @@ public class EmployeeNeo4jDAO implements EmployeeDAO {
 		map.put("type", employee.getType());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			employee.setId_employee(id);
+			employee.setEmployeeId(id);
 		}
 	}
 
@@ -52,7 +52,7 @@ public class EmployeeNeo4jDAO implements EmployeeDAO {
 		map.put("salary", newEmployee.getSalary());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			newEmployee.setId_employee(id);
+			newEmployee.setEmployeeId(id);
 			return true;
 		}
 	}

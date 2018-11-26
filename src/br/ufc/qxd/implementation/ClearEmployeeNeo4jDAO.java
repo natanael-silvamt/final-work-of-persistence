@@ -34,10 +34,10 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 		map.put("sex", clearEmployee.getSex());
 		map.put("birthday", clearEmployee.getBirthday());
 		map.put("salary", clearEmployee.getSalary());
-		map.put("working_days", clearEmployee.getWorking_days());
+		map.put("working_days", clearEmployee.getWorkingDays());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			clearEmployee.setId_employee(id);
+			clearEmployee.setEmployeeId(id);
 		}
 	}
 
@@ -60,10 +60,10 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 		map.put("sex", newClearEmployee.getSex());
 		map.put("birthday", newClearEmployee.getBirthday());
 		map.put("salary", newClearEmployee.getSalary());
-		map.put("working_days", newClearEmployee.getWorking_days());
+		map.put("working_days", newClearEmployee.getWorkingDays());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			newClearEmployee.setId_employee(id);
+			newClearEmployee.setEmployeeId(id);
 			return true;
 		}
 	}
@@ -86,9 +86,9 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 				if(!record.get("c").get("salary").isNull())
 					clearEmployee.setSalary(record.get("c").get("salary").asDouble());
 				if(!record.get("c").get("working_days").isNull())
-					clearEmployee.setWorking_days(record.get("c").get("working_days").asString());
+					clearEmployee.setWorkingDays(record.get("c").get("working_days").asString());
 				if(!record.get("id(c)").isNull())
-					clearEmployee.setId_employee(record.get("id(c)").asLong());				
+					clearEmployee.setEmployeeId(record.get("id(c)").asLong());				
 				clearEMployees.add(clearEmployee);
 			}
 		}
@@ -112,9 +112,9 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 				if(!record.get("c").get("salary").isNull())
 					clearEmployee.setSalary(record.get("c").get("salary").asDouble());
 				if(!record.get("c").get("working_days").isNull())
-					clearEmployee.setWorking_days(record.get("c").get("working_days").asString());
+					clearEmployee.setWorkingDays(record.get("c").get("working_days").asString());
 				if(!record.get("id(c)").isNull())
-					clearEmployee.setId_employee(record.get("id(c)").asLong());
+					clearEmployee.setEmployeeId(record.get("id(c)").asLong());
 			}
 		}
 		return clearEmployee;

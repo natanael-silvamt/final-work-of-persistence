@@ -1,35 +1,35 @@
 package br.ufc.qxd.entities;
 
 public class Dependent {
-	private long id_dependent;
+	private long dependentId;
 	private String name;
 	private String sex;
 	private String birthday;
-	private String degree_of_kinship;
+	private String degreeOfKinship;
 	
-	public Dependent(long id_dependent, String name, String sex, String birthday, String degree_of_kinship) {
-		this.id_dependent = id_dependent;
+	public Dependent(long dependentId, String name, String sex, String birthday, String degreeOfKinship) {
+		this.dependentId = dependentId;
 		this.name = name;
 		this.sex = sex;
 		this.birthday = birthday;
-		this.degree_of_kinship = degree_of_kinship;
+		this.degreeOfKinship = degreeOfKinship;
 	}
 
-	public Dependent(String name, String sex, String birthday, String degree_of_kinship) {
+	public Dependent(String name, String sex, String birthday, String degreeOfKinship) {
 		this.name = name;
 		this.sex = sex;
 		this.birthday = birthday;
-		this.degree_of_kinship = degree_of_kinship;
+		this.degreeOfKinship = degreeOfKinship;
 	}
 
 	public Dependent() {}
 
-	public long getId_dependent() {
-		return id_dependent;
+	public long getDependentId() {
+		return dependentId;
 	}
 
-	public void setId_dependent(long id_dependent) {
-		this.id_dependent = id_dependent;
+	public void setDependentId(long dependentId) {
+		this.dependentId = dependentId;
 	}
 
 	public String getName() {
@@ -56,17 +56,17 @@ public class Dependent {
 		this.birthday = birthday;
 	}
 
-	public String getDegree_of_kinship() {
-		return degree_of_kinship;
+	public String getDegreeOfKinship() {
+		return degreeOfKinship;
 	}
 
-	public void setDegree_of_kinship(String degree_of_kinship) {
-		this.degree_of_kinship = degree_of_kinship;
+	public void setDegreeOfKinship(String degreeOfKinship) {
+		this.degreeOfKinship = degreeOfKinship;
 	}
 
 	@Override
 	public String toString() {
-		return "Dependent [id_dependent=" + id_dependent + ", name=" + name + ", sex=" + sex + ", birthday=" + birthday
-				+ ", degree_of_kinship=" + degree_of_kinship + "]";
+		return "Dependent [dependentId=" + dependentId + ", name=" + name + ", sex=" + sex + ", birthday=" + birthday
+				+ ", degreeOfKinship=" + degreeOfKinship + "]";
 	}
 }

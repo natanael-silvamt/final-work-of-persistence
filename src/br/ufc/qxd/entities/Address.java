@@ -1,14 +1,14 @@
 package br.ufc.qxd.entities;
 
 public class Address {
-	private long id_address;
+	private long addressId;
 	private String street;
 	private int number;
 	private int cep;
 	private String neighborhood;
 	
-	public Address(long id_address, String street, int number, int cep, String neighborhood) {
-		this.id_address = id_address;
+	public Address(long addressId, String street, int number, int cep, String neighborhood) {
+		this.addressId = addressId;
 		this.street = street;
 		this.number = number;
 		this.cep = cep;
@@ -24,11 +24,11 @@ public class Address {
 
 	public Address() {}
 
-	public long getId_address() {
-		return id_address;
+	public long getAddressId() {
+		return addressId;
 	}
-	public void setId_address(long id_address) {
-		this.id_address = id_address;
+	public void setAddressId(long addressId) {
+		this.addressId = addressId;
 	}
 	public String getStreet() {
 		return street;
@@ -56,7 +56,7 @@ public class Address {
 	}
 	@Override
 	public String toString() {
-		return "Address [id_address=" + id_address + ", street=" + street + ", number=" + number + ", cep=" + cep
+		return "Address [addressId=" + addressId + ", street=" + street + ", number=" + number + ", cep=" + cep
 				+ ", neighborhood=" + neighborhood + "]";
 	}	
 }

@@ -1,12 +1,12 @@
 package br.ufc.qxd.entities;
 
 public class Department {
-	private long id_department;
+	private long departmentId;
 	private String name;
 	private int number;
 	
-	public Department(long id_department, String name, int number) {
-		this.id_department = id_department;
+	public Department(long departmentId, String name, int number) {
+		this.departmentId = departmentId;
 		this.name = name;
 		this.number = number;
 	}
@@ -18,12 +18,12 @@ public class Department {
 
 	public Department() {}
 
-	public long getId_department() {
-		return id_department;
+	public long getDepartmentId() {
+		return departmentId;
 	}
 
-	public void setId_department(long id_department) {
-		this.id_department = id_department;
+	public void setDepartmentId(long departmentId) {
+		this.departmentId = departmentId;
 	}
 
 	public String getName() {
@@ -44,6 +44,6 @@ public class Department {
 
 	@Override
 	public String toString() {
-		return "Department [id_department=" + id_department + ", name=" + name + ", number=" + number + "]";
+		return "Department [departmentId=" + departmentId + ", name=" + name + ", number=" + number + "]";
 	}
 }

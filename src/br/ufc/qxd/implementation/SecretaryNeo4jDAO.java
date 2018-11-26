@@ -26,10 +26,10 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 		map.put("sex", secretary.getSex());
 		map.put("birthday", secretary.getBirthday());
 		map.put("salary", secretary.getSalary());
-		map.put("degree_of_schooling", secretary.getDegree_of_schooling());
+		map.put("degree_of_schooling", secretary.getDegreeOfSchooling());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			secretary.setId_employee(id);
+			secretary.setEmployeeId(id);
 		}
 	}
 
@@ -52,10 +52,10 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 		map.put("sex", newSecretary.getSex());
 		map.put("birthday", newSecretary.getBirthday());
 		map.put("salary", newSecretary.getSalary());
-		map.put("degree_of_schooling", newSecretary.getDegree_of_schooling());
+		map.put("degree_of_schooling", newSecretary.getDegreeOfSchooling());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			newSecretary.setId_employee(id);
+			newSecretary.setEmployeeId(id);
 			return true;
 		}
 	}
@@ -80,7 +80,7 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 				if(!record.get("s").get("degree_of_schooling").isNull())
 					secretary.setBirthday(record.get("s").get("degree_of_schooling").asString());
 				if(!record.get("id(s)").isNull())
-					secretary.setId_employee(record.get("id(s)").asLong());				
+					secretary.setEmployeeId(record.get("id(s)").asLong());				
 				secretaries.add(secretary);
 			}
 		}
@@ -104,9 +104,9 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 				if(!record.get("s").get("salary").isNull())
 					secretary.setSalary(record.get("s").get("salary").asDouble());
 				if(!record.get("s").get("degree_of_schooling").isNull())
-					secretary.setDegree_of_schooling(record.get("s").get("degree_of_schooling").asString());
+					secretary.setDegreeOfSchooling(record.get("s").get("degree_of_schooling").asString());
 				if(!record.get("id(s)").isNull())
-					secretary.setId_employee(record.get("id(s)").asLong());
+					secretary.setEmployeeId(record.get("id(s)").asLong());
 			}
 		}
 		return secretary;

@@ -25,10 +25,10 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 		map.put("sex", researcher.getSex());
 		map.put("birthday", researcher.getBirthday());
 		map.put("salary", researcher.getSalary());
-		map.put("occupation_area", researcher.getOccupation_area());
+		map.put("occupation_area", researcher.getOccupationArea());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			researcher.setId_employee(id);
+			researcher.setEmployeeId(id);
 		}
 	}
 
@@ -51,10 +51,10 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 		map.put("sex", newResearcher.getSex());
 		map.put("birthday", newResearcher.getBirthday());
 		map.put("salary", newResearcher.getSalary());
-		map.put("occupation_area", newResearcher.getOccupation_area());
+		map.put("occupation_area", newResearcher.getOccupationArea());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			long id = session.writeTransaction(new MyTransactionWork(query, map));
-			newResearcher.setId_employee(id); // RM: precisa setar um id num update?
+			newResearcher.setEmployeeId(id); // RM: precisa setar um id num update?
 			return true;
 		}
 	}
@@ -79,7 +79,7 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 				if(!record.get("r").get("occupation_area").isNull())
 					researcher.setBirthday(record.get("r").get("occupation_area").asString());
 				if(!record.get("id(r)").isNull())
-					researcher.setId_employee(record.get("id(r)").asLong());				
+					researcher.setEmployeeId(record.get("id(r)").asLong());				
 				researchers.add(researcher);
 			}
 		}
@@ -103,18 +103,27 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 				if(!record.get("r").get("salary").isNull())
 					researcher.setSalary(record.get("r").get("salary").asDouble());
 				if(!record.get("r").get("occupation_area").isNull())
-					researcher.setOccupation_area(record.get("r").get("occupation_area").asString());
+					researcher.setOccupationArea(record.get("r").get("occupation_area").asString());
 				if(!record.get("id(r)").isNull())
-					researcher.setId_employee(record.get("id(r)").asLong());
+					researcher.setEmployeeId(record.get("id(r)").asLong());
 			}
 		}
 		return researcher;
 	}
 
 	@Override
-	public void relationshipToProject(long id_project, long id_researcher) {
-		String query = "MATCH (p:project), (r:researcher) WHERE id(p)=" + id_project + 
-				" AND id(r)=" + id_researcher + " CREATE (r)-[w:work]->(p) RETURN w";
+	public void relationshipToProject(long projectId, long researcherId) {
+		String query = "MATCH (p:project), (r:researcher) WHERE id(p)=" + projectId + 
+				" AND id(r)=" + researcherId + " CREATE (r)-[w:work]->(p) RETURN w";
+		try(Session session = ConnectionNeo4j.getDriver().session()){
+			session.run(query);
+		}
+	}
+
+	@Override
+	public void relationshipToDepartament(long departamentId, long researcherId) {
+		String query = "MATCH (d:departament), (r:researcher) WHERE id(d)=" + departamentId + 
+				" AND id(r)=" + researcherId + " CREATE (r)-[a:associated_with]->(d) RETURN a";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 		}

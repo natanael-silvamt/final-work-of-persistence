@@ -24,7 +24,7 @@ public class ProjectNeo4jDAO implements ProjectDAO{
 		map.put("number", project.getNumber());
 		map.put("term", project.getTerm());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
-			project.setId_project(session.writeTransaction(new MyTransactionWork(query, map)));
+			project.setProjectId(session.writeTransaction(new MyTransactionWork(query, map)));
 		}
 	}
 
@@ -45,7 +45,7 @@ public class ProjectNeo4jDAO implements ProjectDAO{
 		map.put("number", newProject.getNumber());
 		map.put("term", newProject.getTerm());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
-			newProject.setId_project(session.writeTransaction(new MyTransactionWork(query, map)));
+			newProject.setProjectId(session.writeTransaction(new MyTransactionWork(query, map)));
 			return true;
 		}
 	}
@@ -66,7 +66,7 @@ public class ProjectNeo4jDAO implements ProjectDAO{
 				if(!rec.get("p").get("term").isNull())
 					proj.setTerm(rec.get("p").get("term").asString());
 				if(!rec.get("id(p)").isNull())
-					proj.setId_project(rec.get("id(p)").asLong());
+					proj.setProjectId(rec.get("id(p)").asLong());
 				projects.add(proj);
 			}
 		}
@@ -86,7 +86,7 @@ public class ProjectNeo4jDAO implements ProjectDAO{
 				if(!rec.get("p").get("number").isNull())
 					proj.setNumber(rec.get("p").get("number").asInt());
 				if(!rec.get("id(p)").isNull())
-					proj.setId_project(rec.get("id(p)").asLong());
+					proj.setProjectId(rec.get("id(p)").asLong());
 				if(!rec.get("p").get("term").isNull())
 					proj.setTerm(rec.get("p").get("term").asString());
 			}
