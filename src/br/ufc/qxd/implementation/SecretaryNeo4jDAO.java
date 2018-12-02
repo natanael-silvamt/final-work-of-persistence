@@ -11,7 +11,7 @@ import org.neo4j.driver.v1.StatementResult;
 
 import br.ufc.qxd.connection.ConnectionNeo4j;
 import br.ufc.qxd.dao.SecretaryDAO;
-import br.ufc.qxd.entities.Researcher;
+import br.ufc.qxd.entities.Dependent;
 import br.ufc.qxd.entities.Secretary;
 import br.ufc.qxd.util.MyTransactionWork;
 
@@ -35,7 +35,7 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 
 	@Override
 	public boolean remove(long id) {
-		String query = "match(s:secretary) where id(s)=" + String.valueOf(id) + " delete s";
+		String query = "MATCH(s:secretary) WHERE id(s)=" + String.valueOf(id) + " DETACH DELETE s";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 			return true;			
@@ -110,5 +110,52 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 			}
 		}
 		return secretary;
+	}
+
+	@Override
+	public boolean relationshipToProject(long idEmployee, long idProject) {
+		String query = "MATCH (s:secretary), (p:project) WHERE id(s)=" + idEmployee +
+				" AND id(p)=" + idProject + " CREATE (s)-[w:work]->(p) RETURN w";
+		transaction(query);
+		return true;
+	}
+	
+	private void transaction(String query) {
+		try(Session session = ConnectionNeo4j.getDriver().session()){
+			session.run(query);
+		}
+	}
+
+	@Override
+	public boolean relationshipToDepartment(long idEmployee, long idDepartment) {
+		String query = "MATCH (s:secretary), (d:department) WHERE id(s)=" + idEmployee +
+				" AND id(d)=" + idDepartment + " CREATE (s)-[a:associated_with]->(d) RETURN a";
+		transaction(query);
+		return true;
+	}
+
+	@Override
+	public List<Dependent> findAllDependets(long idEmployee) {
+		List<Dependent> dependents = new ArrayList<>();
+		String query = "MATCH (secretary)-[:dependent]->(d:dependent) WHERE id(secretary)=" + idEmployee + " RETURN d, id(d)";
+		try(Session session = ConnectionNeo4j.getDriver().session()){
+			StatementResult rs = session.run(query);
+			while(rs.hasNext()) {
+				Record rec = rs.next();
+				Dependent dep = new Dependent();
+				if(!rec.get("d").get("name").isNull())
+					dep.setName(rec.get("d").get("name").asString());
+				if(!rec.get("d").get("sex").isNull())
+					dep.setSex(rec.get("d").get("sex").asString());
+				if(!rec.get("d").get("birthday").isNull())
+					dep.setBirthday(rec.get("d").get("birthday").asString());
+				if(!rec.get("d").get("degreeOfKinship").isNull())
+					dep.setDegreeOfKinship(rec.get("d").get("degreeOfKinship").asString());
+				if(!rec.get("id(d)").isNull())
+					dep.setDependentId(rec.get("id(d)").asLong());
+				dependents.add(dep);
+			}
+		}
+		return dependents;
 	}
 }

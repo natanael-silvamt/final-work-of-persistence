@@ -11,6 +11,7 @@ import org.neo4j.driver.v1.StatementResult;
 
 import br.ufc.qxd.connection.ConnectionNeo4j;
 import br.ufc.qxd.dao.ResearcherDAO;
+import br.ufc.qxd.entities.Dependent;
 import br.ufc.qxd.entities.Researcher;
 import br.ufc.qxd.util.MyTransactionWork;
 
@@ -34,11 +35,9 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 
 	@Override
 	public boolean remove(long id) {
-		String query = "match(r:researcher) where id(r)=" + String.valueOf(id) + " delete r";
-		try(Session session = ConnectionNeo4j.getDriver().session()){
-			session.run(query);
-			return true;			
-		}
+		String query = "MATCH(r:researcher) WHERE id(r)=" + String.valueOf(id) + " DETACH DELETE r";
+		transaction(query);
+		return true;
 	}
 
 	@Override
@@ -112,20 +111,49 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 	}
 
 	@Override
-	public void relationshipToProject(long projectId, long researcherId) {
+	public boolean relationshipToProject(long projectId, long researcherId) {
 		String query = "MATCH (p:project), (r:researcher) WHERE id(p)=" + projectId + 
 				" AND id(r)=" + researcherId + " CREATE (r)-[w:work]->(p) RETURN w";
+		transaction(query);
+		return true;
+	}
+
+	@Override
+	public boolean relationshipToDepartament(long departamentId, long researcherId) {
+		String query = "MATCH (d:departament), (r:researcher) WHERE id(d)=" + departamentId + 
+				" AND id(r)=" + researcherId + " CREATE (r)-[a:associated_with]->(d) RETURN a";
+		transaction(query);
+		return true;
+	}
+	
+	private void transaction(String query) {
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 		}
 	}
 
 	@Override
-	public void relationshipToDepartament(long departamentId, long researcherId) {
-		String query = "MATCH (d:departament), (r:researcher) WHERE id(d)=" + departamentId + 
-				" AND id(r)=" + researcherId + " CREATE (r)-[a:associated_with]->(d) RETURN a";
+	public List<Dependent> findAllDependets(long idEmployee) {
+		List<Dependent> dependents = new ArrayList<>();
+		String query = "MATCH (researcher)-[:dependent]->(d:dependent) WHERE id(researcher)=" + idEmployee + " RETURN d, id(d)";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
-			session.run(query);
+			StatementResult rs = session.run(query);
+			while(rs.hasNext()) {
+				Record rec = rs.next();
+				Dependent dep = new Dependent();
+				if(!rec.get("d").get("name").isNull())
+					dep.setName(rec.get("d").get("name").asString());
+				if(!rec.get("d").get("sex").isNull())
+					dep.setSex(rec.get("d").get("sex").asString());
+				if(!rec.get("d").get("birthday").isNull())
+					dep.setBirthday(rec.get("d").get("birthday").asString());
+				if(!rec.get("d").get("degreeOfKinship").isNull())
+					dep.setDegreeOfKinship(rec.get("d").get("degreeOfKinship").asString());
+				if(!rec.get("id(d)").isNull())
+					dep.setDependentId(rec.get("id(d)").asLong());
+				dependents.add(dep);
+			}
 		}
+		return dependents;
 	}
 }

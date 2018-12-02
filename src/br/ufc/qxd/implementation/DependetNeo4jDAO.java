@@ -10,16 +10,39 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 
 import br.ufc.qxd.connection.ConnectionNeo4j;
+import br.ufc.qxd.dao.ClearEmployeeDAO;
 import br.ufc.qxd.dao.DependentDAO;
+import br.ufc.qxd.dao.ResearcherDAO;
+import br.ufc.qxd.dao.SecretaryDAO;
 import br.ufc.qxd.entities.Dependent;
 import br.ufc.qxd.util.MyTransactionWork;
 
 public class DependetNeo4jDAO implements DependentDAO {
+	private SecretaryDAO secretaryDAO = new SecretaryNeo4jDAO();
+	private ResearcherDAO researcherDAO = new ResearcherNeo4jDAO();
+	private ClearEmployeeDAO clearEmployeeDAO = new ClearEmployeeNeo4jDAO();
 
 	@Override
-	public void relationshipToEmployee(long employeeId, long dependentId) {
-		// TODO Auto-generated method stub
-		
+	public boolean relationshipToEmployee(long employeeId, long dependentId) {
+		if(!this.secretaryDAO.findById(employeeId).equals(null)) {
+			String query = "MATCH (d:dependent), (s:secretary) WHERE id(s)=" + employeeId +
+					" AND id(d)=" + dependentId + " CREATE (s)-[dep:dependent]->(d) RETURN dep";
+			transaction(query);
+			return true;
+		}
+		else if(!this.researcherDAO.findById(employeeId).equals(null)) {
+			String query = "MATCH (d:dependent), (r:researcher) WHERE id(d)=" + dependentId +
+					" AND id(r)=" + employeeId + " CREATE (r)-[dep:dependent]->(d) RETURN dep";
+			transaction(query);
+			return true;
+		}
+		else if(!this.clearEmployeeDAO.findById(employeeId).equals(null)) {
+			String query = "MATCH (d:dependent), (c:clearEmployee) WHERE id(d)=" + dependentId +
+					" AND id(c)=" + employeeId + " CREATE (c)-[dep:dependent]->(d) RETURN dep";
+			transaction(query);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -39,7 +62,7 @@ public class DependetNeo4jDAO implements DependentDAO {
 
 	@Override
 	public boolean remove(long id) {
-		String query = "match(d:dependent) where id(d)=" + String.valueOf(id) + " delete d";
+		String query = "MATCH(d:dependent) WHERE id(d)=" + String.valueOf(id) + " DETACH DELETE d";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 			return true;			
@@ -111,6 +134,32 @@ public class DependetNeo4jDAO implements DependentDAO {
 		return dependent;
 	}
 
+	private void transaction(String query) {
+		try(Session session = ConnectionNeo4j.getDriver().session()){
+			session.run(query);
+		}
+	}
+
+	@Override
+	public boolean removeRelationshipToEmployee(long employeeId) {
+		String query = "";
+		if(!this.secretaryDAO.findById(employeeId).equals(null)) {
+			query = "MATCH (secretary)-[:dependent]->(dependent) WHERE id(secretary)=" + employeeId + " DETACH DELETE dependent"; 
+			transaction(query);
+			return true;
+		}
+		else if(!this.researcherDAO.findById(employeeId).equals(null)) {
+			query = "MATCH (researcher)-[:dependent]->(dependent) WHERE id(researcher)=" + employeeId + " DETACH DELETE dependent";
+			transaction(query);
+			return true;
+		}
+		else if(!this.clearEmployeeDAO.findById(employeeId).equals(null)) {
+			query = "MATCH (clearEmployee)-[:dependent]->(dependent) WHERE id(clearEmployee)=" + employeeId + " DETACH DELETE dependent";
+			transaction(query);
+			return true;
+		}
+		return false;
+	}
 	
 	
 }

@@ -30,7 +30,7 @@ public class DepartmentNeo4jDAO implements DepartmentDAO{
 
 	@Override
 	public boolean remove(long id) {
-		String query = "match(d:department) where id(d)=" + String.valueOf(id) + " delete d";
+		String query = "MATCH(d:department) WHERE id(d)=" + String.valueOf(id) + " DETACH DELETE d";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 			return true;			

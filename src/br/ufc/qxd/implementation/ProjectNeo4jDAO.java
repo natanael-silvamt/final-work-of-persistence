@@ -30,7 +30,7 @@ public class ProjectNeo4jDAO implements ProjectDAO{
 
 	@Override
 	public boolean remove(long id) {
-		String query = "match(p:project) where id(p)=" + String.valueOf(id) + " delete p";
+		String query = "MATCH(p:project) WHERE id(p)=" + String.valueOf(id) + " DETACH DELETE p";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 			return true;
@@ -97,7 +97,7 @@ public class ProjectNeo4jDAO implements ProjectDAO{
 	@Override
 	public void relationshipTodepartment(long id_project, long id_department) {
 		String query = "MATCH (p:project), (d:department) WHERE id(p)=" + id_project + 
-				" AND id(d)=" + id_department + " CREATE (p)-[g:gerenciado]->(d) RETURN g";
+				" AND id(d)=" + id_department + " CREATE (p)-[m:managed]->(d) RETURN m";
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			session.run(query);
 		}		

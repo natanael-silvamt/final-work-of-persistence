@@ -12,6 +12,7 @@ import org.neo4j.driver.v1.StatementResult;
 import br.ufc.qxd.connection.ConnectionNeo4j;
 import br.ufc.qxd.dao.ClearEmployeeDAO;
 import br.ufc.qxd.entities.ClearEmployee;
+import br.ufc.qxd.entities.Dependent;
 import br.ufc.qxd.util.MyTransactionWork;
 
 public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
@@ -20,9 +21,7 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 	public void relationshipToClearEmployee(long id_supervisor, long id_clear_employee) {
 		String query = "MATCH (c:clearEmployee), (e:clearEmployee) WHERE id(c)=" + id_supervisor + 
 				" AND id(e)=" + id_clear_employee + " CREATE (c)-[s:supervises]->(e) RETURN s";
-		try(Session session = ConnectionNeo4j.getDriver().session()){
-			session.run(query);
-		}
+		transaction(query);
 	}
 
 	@Override
@@ -43,11 +42,9 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 
 	@Override
 	public boolean remove(long id) {
-		String query = "match(c:clearEmployee) where id(c)=" + String.valueOf(id) + " delete c";
-		try(Session session = ConnectionNeo4j.getDriver().session()){
-			session.run(query);
-			return true;			
-		}
+		String query = "MATCH(c:clearEmployee) WHERE id(c)=" + String.valueOf(id) + " DETACH DELETE c";
+		transaction(query);
+		return true;
 	}
 
 	@Override
@@ -118,5 +115,52 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 			}
 		}
 		return clearEmployee;
+	}
+	
+	private void transaction(String query) {
+		try(Session session = ConnectionNeo4j.getDriver().session()){
+			session.run(query);
+		}
+	}
+
+	@Override
+	public boolean relationshipToProject(long idEmployee, long idProject) {
+		String query = "MATCH (c:clearEmployee), (p:project) WHERE id(c)=" + idEmployee +
+				" AND id(p)=" + idProject + " CREATE (c)-[w:work]->(p) RETURN w";
+		transaction(query);
+		return true;
+	}
+
+	@Override
+	public boolean relationshipToDepartment(long idEmployee, long idDepartment) {
+		String query = "MATCH (c:clearEmployee), (d:department) WHERE id(c)=" + idEmployee +
+				" AND id(d)=" + idDepartment + " CREATE (c)-[a:associated_with]->(d) RETURN a";
+		transaction(query);
+		return true;
+	}
+
+	@Override
+	public List<Dependent> findAllDependets(long idEmployee) {
+		List<Dependent> dependents = new ArrayList<>();
+		String query = "MATCH (clearEmployee)-[:dependent]->(d:dependent) WHERE id(clearEmployee)=" + idEmployee + " RETURN d, id(d)";
+		try(Session session = ConnectionNeo4j.getDriver().session()){
+			StatementResult rs = session.run(query);
+			while(rs.hasNext()) {
+				Record rec = rs.next();
+				Dependent dep = new Dependent();
+				if(!rec.get("d").get("name").isNull())
+					dep.setName(rec.get("d").get("name").asString());
+				if(!rec.get("d").get("sex").isNull())
+					dep.setSex(rec.get("d").get("sex").asString());
+				if(!rec.get("d").get("birthday").isNull())
+					dep.setBirthday(rec.get("d").get("birthday").asString());
+				if(!rec.get("d").get("degreeOfKinship").isNull())
+					dep.setDegreeOfKinship(rec.get("d").get("degreeOfKinship").asString());
+				if(!rec.get("id(d)").isNull())
+					dep.setDependentId(rec.get("id(d)").asLong());
+				dependents.add(dep);
+			}
+		}
+		return dependents;
 	}
 }
