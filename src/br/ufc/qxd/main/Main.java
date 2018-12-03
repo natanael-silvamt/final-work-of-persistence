@@ -29,6 +29,7 @@ import br.ufc.qxd.implementation.ProjectNeo4jDAO;
 import br.ufc.qxd.implementation.ResearcherNeo4jDAO;
 import br.ufc.qxd.implementation.SecretaryNeo4jDAO;
 import br.ufc.qxd.implementation.WorkedHoursNeo4jDAO;
+import br.ufc.qxd.util.*;
 
 public class Main {
 	private static Scanner input;
@@ -130,17 +131,18 @@ public class Main {
 										case 1:{
 											String degreeOfSchooling;
 											long idDepartment = Main.getIdDepartment();
-											Main.getPersonalData();
-											System.out.println("Digite o grau de escolaridade do Funcionário: ");
-											degreeOfSchooling = input.nextLine();
-											Main.getAddressData();											
-											Address address = new Address(Main.street, Main.number, Main.cep, Main.neighborhood);
-											addressDAO.insert(address);
-											Employee secretary = new Secretary(Main.name, Main.sex, Main.birthday, Main.salary, degreeOfSchooling);
-											secretaryDAO.insert((Secretary) secretary);
-											secretaryDAO.relationshipToDepartment(secretary.getEmployeeId(), idDepartment);
-											addressDAO.relationshipToEmployee(address.getAddressId(), secretary.getEmployeeId());
-											System.out.println("Funcionário cadastrado com sucesso.");
+											if(Main.getPersonalData()){
+												System.out.println("Digite o grau de escolaridade do Funcionário: ");
+												degreeOfSchooling = input.nextLine();
+												Main.getAddressData();											
+												Address address = new Address(Main.street, Main.number, Main.cep, Main.neighborhood);
+												addressDAO.insert(address);
+												Employee secretary = new Secretary(Main.name, Main.sex, Main.birthday, Main.salary, degreeOfSchooling);
+												secretaryDAO.insert((Secretary) secretary);
+												secretaryDAO.relationshipToDepartment(secretary.getEmployeeId(), idDepartment);
+												addressDAO.relationshipToEmployee(address.getAddressId(), secretary.getEmployeeId());
+												System.out.println("Funcionário cadastrado com sucesso.");
+											}											
 											break;
 										}
 										case 2:{
@@ -154,8 +156,8 @@ public class Main {
 											addressDAO.insert(address);
 											Employee researcher = new Researcher(Main.name, Main.sex, Main.birthday, Main.salary, occupationArea);
 											researcherDAO.insert((Researcher) researcher);
-											researcherDAO.relationshipToDepartament(idDepartment, researcher.getEmployeeId());
 											addressDAO.relationshipToEmployee(address.getAddressId(), researcher.getEmployeeId());
+											researcherDAO.relationshipToDepartament(idDepartment, researcher.getEmployeeId());
 											System.out.println("Funcionário cadastrado com sucesso.");											
 											break;
 										}
@@ -261,19 +263,19 @@ public class Main {
 									System.out.println("Projeto inválido, digite outro ID: ");
 									idProject = input_long.nextLong();
 								}
-								if(!secretaryDAO.findById(idEmployee).equals(null)) {
+								if(secretaryDAO.findById(idEmployee).getName() != null) {
 									if(secretaryDAO.relationshipToProject(idEmployee, idProject))
 										System.out.println("Funcionário adicionado com sucesso.");
 									else
 										System.out.println("Error ao realizar o relacionamento!!!");
 								}
-								else if(!researcherDAO.findById(idEmployee).equals(null)) {
+								else if(researcherDAO.findById(idEmployee).getName() != null) {
 									if(researcherDAO.relationshipToProject(idProject, idEmployee))
 										System.out.println("Funcionário adicionado com sucesso.");
 									else
 										System.out.println("Error ao realizar o relacionamento!!!");
 								}
-								else if(!clearEmployeeDAO.findById(idEmployee).equals(null)) {
+								else if(clearEmployeeDAO.findById(idEmployee).getName() != null) {
 									if(clearEmployeeDAO.relationshipToProject(idEmployee, idProject))
 										System.out.println("Funcionário adicionado com sucesso.");
 									else
@@ -473,13 +475,13 @@ public class Main {
 								System.out.println("Digite o ID do funcionário: ");
 								idEmployee = input_long.nextLong();
 								List<Dependent> list = null;
-								if(!secretaryDAO.findById(idEmployee).equals(null)) {
+								if(secretaryDAO.findById(idEmployee).getName() != null) {
 									list = secretaryDAO.findAllDependets(idEmployee);
 								}
-								else if(!researcherDAO.findById(idEmployee).equals(null)) {
+								else if(researcherDAO.findById(idEmployee).getName() != null) {
 									list = researcherDAO.findAllDependets(idEmployee);
 								}
-								else if(!clearEmployeeDAO.findById(idEmployee).equals(null)) {
+								else if(clearEmployeeDAO.findById(idEmployee).getName() != null) {
 									list = clearEmployeeDAO.findAllDependets(idEmployee);
 								}
 								else {
@@ -538,17 +540,17 @@ public class Main {
 								idEmployee = input_long.nextLong();
 								addressDAO.remove(idEmployee);
 								dependentDAO.removeRelationshipToEmployee(idEmployee);
-								if(!secretaryDAO.findById(idEmployee).equals(null)) {
+								if(secretaryDAO.findById(idEmployee).getName() != null) {
 									if(secretaryDAO.remove(idEmployee))
 										System.out.println("Funcionário excluido com sucesso.");
 								}
-								else if(!researcherDAO.findById(idEmployee).equals(null)) {
+								if(researcherDAO.findById(idEmployee).getName() != null) {
 									if(workedHoursDAO.remove(idEmployee)){
 										if(researcherDAO.remove(idEmployee))
 											System.out.println("Funcionário excluido com sucesso.");
 									}	 
 								}
-								else if(!clearEmployeeDAO.findById(idEmployee).equals(null)) {
+								if(clearEmployeeDAO.findById(idEmployee).getName() != null) {
 									if(clearEmployeeDAO.remove(idEmployee))
 										System.out.println("Funcionário excluido com sucesso.");
 								}
@@ -573,7 +575,8 @@ public class Main {
 		}
 	}
 	
-	public static void getPersonalData() {
+	public static boolean getPersonalData() {
+		ValidDate valid = new ValidDate();
 		System.out.println("Digite o nome do Funcionário: ");
 		Main.name = input.nextLine();
 		
@@ -583,8 +586,19 @@ public class Main {
 		System.out.println("Digite a data de nascimento do Funcionário: ");
 		Main.birthday = input.nextLine();
 		
+		try {
+			if(!valid.compareTo(birthday)) {
+				System.out.println("Data fora dos limites!!!");
+				return false;
+			}
+		}catch(Exception e) {
+			System.out.println("A data não está no formato certo(dia/mês/ano)!!!");
+			return false;
+		}
+		
 		System.out.println("Digite o salário do Funcionário: ");
 		Main.salary = input_double.nextDouble();
+		return true;
 	}
 	
 	public static void getAddressData() {

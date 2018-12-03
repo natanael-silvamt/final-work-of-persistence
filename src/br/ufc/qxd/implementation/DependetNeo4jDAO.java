@@ -24,19 +24,19 @@ public class DependetNeo4jDAO implements DependentDAO {
 
 	@Override
 	public boolean relationshipToEmployee(long employeeId, long dependentId) {
-		if(!this.secretaryDAO.findById(employeeId).equals(null)) {
+		if(this.secretaryDAO.findById(employeeId).getName() != null) {
 			String query = "MATCH (d:dependent), (s:secretary) WHERE id(s)=" + employeeId +
 					" AND id(d)=" + dependentId + " CREATE (s)-[dep:dependent]->(d) RETURN dep";
 			transaction(query);
 			return true;
 		}
-		else if(!this.researcherDAO.findById(employeeId).equals(null)) {
-			String query = "MATCH (d:dependent), (r:researcher) WHERE id(d)=" + dependentId +
+		else if(this.researcherDAO.findById(employeeId).getName() != null) {
+			String query = "OPTIONAL MATCH (d:dependent), (r:researcher) WHERE id(d)=" + dependentId +
 					" AND id(r)=" + employeeId + " CREATE (r)-[dep:dependent]->(d) RETURN dep";
 			transaction(query);
 			return true;
 		}
-		else if(!this.clearEmployeeDAO.findById(employeeId).equals(null)) {
+		else if(this.clearEmployeeDAO.findById(employeeId).getName() != null) {
 			String query = "MATCH (d:dependent), (c:clearEmployee) WHERE id(d)=" + dependentId +
 					" AND id(c)=" + employeeId + " CREATE (c)-[dep:dependent]->(d) RETURN dep";
 			transaction(query);
@@ -101,7 +101,7 @@ public class DependetNeo4jDAO implements DependentDAO {
 					dependent.setSex(record.get("d").get("sex").asString());
 				if(!record.get("d").get("birthday").isNull())
 					dependent.setBirthday(record.get("d").get("birthday").asString());
-				if(!record.get("d").get("salary").isNull())
+				if(!record.get("d").get("degree_of_kinship").isNull())
 					dependent.setDegreeOfKinship(record.get("d").get("degree_of_kinship").asString());
 				if(!record.get("id(d)").isNull())
 					dependent.setDependentId(record.get("id(d)").asLong());				
@@ -143,23 +143,21 @@ public class DependetNeo4jDAO implements DependentDAO {
 	@Override
 	public boolean removeRelationshipToEmployee(long employeeId) {
 		String query = "";
-		if(!this.secretaryDAO.findById(employeeId).equals(null)) {
+		if(this.secretaryDAO.findById(employeeId).getName() != null) {
 			query = "MATCH (secretary)-[:dependent]->(dependent) WHERE id(secretary)=" + employeeId + " DETACH DELETE dependent"; 
 			transaction(query);
 			return true;
 		}
-		else if(!this.researcherDAO.findById(employeeId).equals(null)) {
+		else if(this.researcherDAO.findById(employeeId).getName() != null) {
 			query = "MATCH (researcher)-[:dependent]->(dependent) WHERE id(researcher)=" + employeeId + " DETACH DELETE dependent";
 			transaction(query);
 			return true;
 		}
-		else if(!this.clearEmployeeDAO.findById(employeeId).equals(null)) {
+		else if(this.clearEmployeeDAO.findById(employeeId).getName() != null) {
 			query = "MATCH (clearEmployee)-[:dependent]->(dependent) WHERE id(clearEmployee)=" + employeeId + " DETACH DELETE dependent";
 			transaction(query);
 			return true;
 		}
 		return false;
 	}
-	
-	
 }

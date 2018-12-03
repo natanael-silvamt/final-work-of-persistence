@@ -76,7 +76,7 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 				if(!record.get("r").get("salary").isNull())
 					researcher.setSalary(record.get("r").get("salary").asDouble());
 				if(!record.get("r").get("occupation_area").isNull())
-					researcher.setBirthday(record.get("r").get("occupation_area").asString());
+					researcher.setOccupationArea(record.get("r").get("occupation_area").asString());
 				if(!record.get("id(r)").isNull())
 					researcher.setEmployeeId(record.get("id(r)").asLong());				
 				researchers.add(researcher);
@@ -120,7 +120,7 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 
 	@Override
 	public boolean relationshipToDepartament(long departamentId, long researcherId) {
-		String query = "MATCH (d:departament), (r:researcher) WHERE id(d)=" + departamentId + 
+		String query = "MATCH (d:department), (r:researcher) WHERE id(d)=" + departamentId + 
 				" AND id(r)=" + researcherId + " CREATE (r)-[a:associated_with]->(d) RETURN a";
 		transaction(query);
 		return true;
@@ -147,8 +147,8 @@ public class ResearcherNeo4jDAO implements ResearcherDAO {
 					dep.setSex(rec.get("d").get("sex").asString());
 				if(!rec.get("d").get("birthday").isNull())
 					dep.setBirthday(rec.get("d").get("birthday").asString());
-				if(!rec.get("d").get("degreeOfKinship").isNull())
-					dep.setDegreeOfKinship(rec.get("d").get("degreeOfKinship").asString());
+				if(!rec.get("d").get("degree_of_kinship").isNull())
+					dep.setDegreeOfKinship(rec.get("d").get("degree_of_kinship").asString());
 				if(!rec.get("id(d)").isNull())
 					dep.setDependentId(rec.get("id(d)").asLong());
 				dependents.add(dep);

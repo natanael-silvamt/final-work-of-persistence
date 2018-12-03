@@ -36,17 +36,17 @@ public class AddressNeo4jDAO implements AddressDAO{
 	@Override
 	public boolean remove(long idEmployee) {
 		String query = "";
-		if(!this.secretaryDAO.findById(idEmployee).equals(null)) {
+		if(this.secretaryDAO.findById(idEmployee).getName() != null) {
 			query = "MATCH (secretary)-[:live]->(address) WHERE id(secretary)=" + idEmployee + " DETACH DELETE address";
 			transaction(query);
 			return true;
 		}
-		else if(!this.researcherDAO.findById(idEmployee).equals(null)) {
+		else if(this.researcherDAO.findById(idEmployee).getName() != null) {
 			query = "MATCH (researcher)-[:live]->(address) WHERE id(researcher)=" + idEmployee + " DETACH DELETE address";
 			transaction(query);
 			return true;
 		}
-		else if(!this.clearEmployeeDAO.findById(idEmployee).equals(null)) {
+		else if(this.clearEmployeeDAO.findById(idEmployee).getName() != null) {
 			query = "MATCH (clearEmployee)-[:live]->(address) WHERE id(clearEmployee)=" + idEmployee + " DETACH DELETE address";
 			transaction(query);
 			return true;
@@ -57,15 +57,15 @@ public class AddressNeo4jDAO implements AddressDAO{
 	@Override
 	public boolean update(long idEmployee, Address newAddress) {
 		String query = "";
-		if(!this.secretaryDAO.findById(idEmployee).equals(null)) {
+		if(this.secretaryDAO.findById(idEmployee).getName() != null) {
 			query = "MATCH (secretary)-[:live]->(a:address) WHERE id(secretary)=" + idEmployee + 
 					" set a.street, a.number, a.cep, a.neighborhood RETURN id(a)";
 		}		
-		else if(!this.researcherDAO.findById(idEmployee).equals(null)) {
+		else if(this.researcherDAO.findById(idEmployee).getName() != null) {
 			query = "MATCH (researcher)-[:live]->(a:address) WHERE id(researcher)=" + idEmployee + 
 					" set a.street, a.number, a.cep, a.neighborhood RETURN id(a)";
 		}
-		else if(!this.clearEmployeeDAO.findById(idEmployee).equals(null)) {
+		else if(this.clearEmployeeDAO.findById(idEmployee).getName() != null) {
 			query = "MATCH (clearEmployee)-[:live]->(a:address) WHERE id(clearEmployee)=" + idEmployee + 
 					" set a.street, a.number, a.cep, a.neighborhood RETURN id(a)";
 		}
@@ -86,17 +86,17 @@ public class AddressNeo4jDAO implements AddressDAO{
 
 	@Override
 	public void relationshipToEmployee(long idAdress, long idEmployee) {
-		if(!this.secretaryDAO.findById(idEmployee).equals(null)) {
+		if(this.secretaryDAO.findById(idEmployee).getName() != null) {
 			String query = "MATCH (a:address), (s:secretary) WHERE id(s)=" + idEmployee +
 					" AND id(a)=" + idAdress + " CREATE (s)-[l:live]->(a) RETURN l";
 			transaction(query);
 		}
-		else if(!this.researcherDAO.findById(idEmployee).equals(null)) {
-			String query = "MATCH (r:researcher), (a:address) WHERE id(r)=" + idEmployee +
+		else if(this.researcherDAO.findById(idEmployee).getName() != null) {
+			String query = "MATCH (a:address), (r:researcher) WHERE id(r)=" + idEmployee +
 					" AND id(a)=" + idAdress + " CREATE (r)-[l:live]->(a) RETURN l";
 			transaction(query);
 		}
-		else if(!this.clearEmployeeDAO.findById(idEmployee).equals(null)) {
+		else if(this.clearEmployeeDAO.findById(idEmployee).getName() != null) {
 			String query = "MATCH (c:clearEmployee), (a:address) WHERE id(c)=" + idEmployee +
 					" AND id(a)=" + idAdress + " CREATE (c)-[l:live]->(a) RETURN l";
 			transaction(query);

@@ -94,7 +94,7 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 
 	@Override
 	public ClearEmployee findById(long id) {
-		String query = "match(c:clearEMployee) where id(c)=" + id + " return c, id(c)";
+		String query = "match(c:clearEmployee) where id(c)=" + id + " return c, id(c)";
 		ClearEmployee clearEmployee = new ClearEmployee();
 		try(Session session = ConnectionNeo4j.getDriver().session()){
 			StatementResult sr = session.run(query);
@@ -154,8 +154,8 @@ public class ClearEmployeeNeo4jDAO implements ClearEmployeeDAO {
 					dep.setSex(rec.get("d").get("sex").asString());
 				if(!rec.get("d").get("birthday").isNull())
 					dep.setBirthday(rec.get("d").get("birthday").asString());
-				if(!rec.get("d").get("degreeOfKinship").isNull())
-					dep.setDegreeOfKinship(rec.get("d").get("degreeOfKinship").asString());
+				if(!rec.get("d").get("degree_of_kinship").isNull())
+					dep.setDegreeOfKinship(rec.get("d").get("degree_of_kinship").asString());
 				if(!rec.get("id(d)").isNull())
 					dep.setDependentId(rec.get("id(d)").asLong());
 				dependents.add(dep);

@@ -95,8 +95,12 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 			StatementResult sr = session.run(query);
 			while(sr.hasNext()) {
 				Record record = sr.next();
-				if(!record.get("s").get("name").isNull())
+				if(!record.get("s").get("name").isNull()) {
 					secretary.setName(record.get("s").get("name").asString());
+				}
+				else {
+					System.out.println("sim ok");
+				}
 				if(!record.get("s").get("sex").isNull())
 					secretary.setSex(record.get("s").get("sex").asString());
 				if(!record.get("s").get("birthday").isNull())
@@ -149,8 +153,8 @@ public class SecretaryNeo4jDAO implements SecretaryDAO {
 					dep.setSex(rec.get("d").get("sex").asString());
 				if(!rec.get("d").get("birthday").isNull())
 					dep.setBirthday(rec.get("d").get("birthday").asString());
-				if(!rec.get("d").get("degreeOfKinship").isNull())
-					dep.setDegreeOfKinship(rec.get("d").get("degreeOfKinship").asString());
+				if(!rec.get("d").get("degree_of_kinship").isNull())
+					dep.setDegreeOfKinship(rec.get("d").get("degree_of_kinship").asString());
 				if(!rec.get("id(d)").isNull())
 					dep.setDependentId(rec.get("id(d)").asLong());
 				dependents.add(dep);

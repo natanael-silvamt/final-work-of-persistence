@@ -14,7 +14,7 @@ public class WorkedHoursNeo4jDAO implements WorkedHoursDAO{
 
 	@Override
 	public void insert(WorkedHours workedHours) {
-		String query = "CREATE(w:workeHours) SET w.amountOfHours=$amountOfHours RETURN id(w)";
+		String query = "CREATE(w:workedHours) SET w.amountOfHours=$amountOfHours RETURN id(w)";
 		Map<String, Object> map = new HashMap<>();
 		map.put("amountOfHours", workedHours.getAmount_of_hours());
 		try(Session session = ConnectionNeo4j.getDriver().session()){
@@ -26,7 +26,7 @@ public class WorkedHoursNeo4jDAO implements WorkedHoursDAO{
 	@Override
 	public void relationshipToresearcher(long idResearcher, long idWorkedHours) {
 		String query = "MATCH (r:researcher), (w:workedHours) WHERE id(r)=" + idResearcher +
-				" AND id(w)=" + idWorkedHours + " CREATE (r)-[w:worked]->(w) RETURN w";
+				" AND id(w)=" + idWorkedHours + " CREATE (r)-[wd:worked]->(w) RETURN wd";
 		transaction(query);
 	}
 
